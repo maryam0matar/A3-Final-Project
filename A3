@@ -1,0 +1,91 @@
+import heapq
+
+class Post:
+    def __init__(self, content, author, views):
+        self.content = content
+        self.author = author
+        self.views = views
+        # Use negative views for max-heap behavior
+        self.heap_node = (-self.views, self.content, self.author)
+
+class PostHeap:
+    def __init__(self):
+        self.heap = []
+
+    def add_post(self, post):
+        heapq.heappush(self.heap, post.heap_node)
+
+    def get_top_post(self):
+        if self.heap:
+            top_post = heapq.heappop(self.heap)
+            return (-top_post[0], top_post[1], top_post[2])
+        else:
+            return "No posts available"
+
+    def display_top_post(self):
+        top_posts = []
+        while self.heap:
+            top_post = self.get_top_post()
+            top_posts.append(top_post)
+            if self.heap and self.heap[0][0] != top_post[0]:
+                break
+        if top_posts:
+            for post in top_posts:
+                print(f"Views: {post[0]}, Content: {post[1]}, Author: {post[2]}")
+        else:
+            print("No posts available")
+
+# Example Usage
+heap = PostHeap()
+post1 = Post("Funny Joke", "Ali", 500)
+post2 = Post("Cute Puppy", "Badria", 200)
+post3 = Post("Delicious Cake", "Hassan", 100)
+post4 = Post("Beautiful Sunset", "Diana", 300)
+
+heap.add_post(post1)
+heap.add_post(post2)
+heap.add_post(post3)
+heap.add_post(post4)
+
+heap.display_top_post()
+
+# New Test Cases
+heap = PostHeap()
+post5 = Post("Exciting Adventure", "Shamma", 700)
+post6 = Post("Amazing Science", "Aisha", 400)
+post7 = Post("Funny Comic", "Noora", 600)
+post8 = Post("Inspiring Quote", "Hessa", 800)
+
+heap.add_post(post5)
+heap.add_post(post6)
+heap.add_post(post7)
+heap.add_post(post8)
+
+heap.display_top_post()
+
+# Two Additional Test Cases
+heap = PostHeap()
+post9 = Post("Motivational Speech", "Sarah", 900)
+post10 = Post("Travel Photography", "Tara", 1200)
+post11 = Post("Educational Tutorial", "Andrew", 1500)
+post12 = Post("Heartwarming Story", "Nasser", 1100)
+
+heap.add_post(post9)
+heap.add_post(post10)
+heap.add_post(post11)
+heap.add_post(post12)
+
+heap.display_top_post()
+
+heap = PostHeap()
+post13 = Post("Recipe Sharing", "Rashid", 800)
+post14 = Post("Fitness Tips", "Ramy", 600)
+post15 = Post("Gardening Guide", "Georgia", 1000)
+post16 = Post("Fashion Trends", "Fatma", 700)
+
+heap.add_post(post13)
+heap.add_post(post14)
+heap.add_post(post15)
+heap.add_post(post16)
+
+heap.display_top_post()
