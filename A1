@@ -1,0 +1,40 @@
+Code cell A1:-      # Implementation of Social Media Manager
+class SocialMediaManager:
+    def __init__(self):
+        self.posts = {}  # Initialize a dictionary to store posts with datetime as keys
+
+    # Method to add or update a post in the manager
+    def add_post(self, datetime, post, user):
+        # Adding or updating a post with datetime as the key
+        self.posts[datetime] = {'post': post, 'user': user}
+
+    # Method to find a post by its datetime
+    def find_post_by_datetime(self, datetime):
+        # Attempt to retrieve a post using datetime as the key
+        # Returns None if the post is not found
+        return self.posts.get(datetime, None)
+
+# TEST CASES:
+
+# Create an instance of SocialMediaManager
+manager = SocialMediaManager()
+
+# Test Case 1: Add and retrieve a post
+manager.add_post('2024-05-01 09:00:00', 'Excited for the new project!', 'Andrew')
+post_found = manager.find_post_by_datetime('2024-05-01 09:00:00')
+print(post_found)  # Expected Output: {'post': 'Excited for the new project!', 'user': 'Andrew'}
+
+# Test Case 2: Try to retrieve a post that does not exist
+post_not_found = manager.find_post_by_datetime('2024-05-02 10:00:00')
+print(post_not_found)  # Expected Output: None
+
+# Test Case 3: Add multiple posts and retrieve one
+manager.add_post('2024-05-01 10:15:00', 'Happy Birthday Mark!', 'Ali')
+manager.add_post('2024-05-01 11:30:00', 'Looking forward to the weekend!', 'Mohammed')
+post_found_multiple = manager.find_post_by_datetime('2024-05-01 11:30:00')
+print(post_found_multiple)  # Expected Output: {'post': 'Looking forward to the weekend!', 'user': 'Mohammed'}
+
+# Test Case 4: Update an existing post and verify the update
+manager.add_post('2024-05-01 09:00:00', 'Project launch postponed to next week.', 'Abdulla')
+updated_post = manager.find_post_by_datetime('2024-05-01 09:00:00')
+print(updated_post)  # Expected Output: {'post': 'Project launch postponed to next week.', 'user': 'ABdulla'}
