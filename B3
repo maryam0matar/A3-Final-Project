@@ -1,0 +1,103 @@
+import heapq
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
+class Intersection:
+    def __init__(self, intersection_id):
+        self.id = intersection_id
+        self.adjacent = {}  # {neighbor_intersection_id: road_info}
+
+
+    def add_neighbor(self, neighbor, road_info):
+        self.adjacent[neighbor] = road_info
+
+
+class RoadNetwork:
+    def __init__(self):
+        self.intersections = {}
+
+
+    def add_intersection(self, intersection_id):
+        if intersection_id not in self.intersections:
+            self.intersections[intersection_id] = Intersection(intersection_id)
+
+
+    def add_road(self, start_intersection, end_intersection, road_id, road_name, length):
+        if start_intersection not in self.intersections:
+            self.add_intersection(start_intersection)
+        if end_intersection not in self.intersections:
+            self.add_intersection(end_intersection)
+        self.intersections[start_intersection].add_neighbor(end_intersection, {'road_id': road_id, 'road_name': road_name, 'length': length})
+        self.intersections[end_intersection].add_neighbor(start_intersection, {'road_id': road_id, 'road_name': road_name, 'length': length})
+
+
+    def dijkstra_shortest_path(self, start_intersection, end_intersection):
+        distances = {intersection_id: float('inf') for intersection_id in self.intersections}
+        distances[start_intersection] = 0
+        heap = [(0, start_intersection)]
+        while heap:
+            current_distance, current_intersection = heapq.heappop(heap)
+            if current_distance > distances[current_intersection]:
+                continue
+            if current_intersection == end_intersection:
+                return distances[end_intersection]
+            for neighbor_intersection, road_info in self.intersections[current_intersection].adjacent.items():
+                distance = current_distance + road_info['length']
+                if distance < distances[neighbor_intersection]:
+                    distances[neighbor_intersection] = distance
+                    heapq.heappush(heap, (distance, neighbor_intersection))
+        return float('inf')
+
+
+    def plot_graph(self):
+        G = nx.Graph()
+        for intersection_id, intersection in self.intersections.items():
+            G.add_node(intersection_id)
+            for neighbor_intersection, road_info in intersection.adjacent.items():
+                G.add_edge(intersection_id, neighbor_intersection, length=road_info['length'])
+        pos = nx.spring_layout(G, seed=42)  # Improved layout for better spacing
+        plt.figure(figsize=(12, 8))
+        nx.draw(G, pos, with_labels=True, node_size=700, node_color="lightblue", font_size=10, font_weight="bold")
+        nx.draw_networkx_edge_labels(G, pos, font_color='black', edge_labels=nx.get_edge_attributes(G, 'length'))
+        plt.title("Road Network Graph")
+        plt.show()
+                   
+            
+# Creating a new road network
+new_road_network = RoadNetwork()
+
+
+# Adding intersections
+new_road_network.add_intersection(201)
+new_road_network.add_intersection(202)
+new_road_network.add_intersection(203)
+new_road_network.add_intersection(204)
+new_road_network.add_intersection(205)
+
+
+# Adding roads
+new_road_network.add_road(201, 202, 12, "Street A", 3)
+new_road_network.add_road(201, 203, 13, "Street B", 5)
+new_road_network.add_road(202, 204, 14, "Street C", 4)
+new_road_network.add_road(202, 205, 15, "Street D", 6)
+new_road_network.add_road(203, 204, 16, "Street E", 7)
+new_road_network.add_road(203, 205, 17, "Street F", 3)
+new_road_network.add_road(204, 205, 18, "Street G", 5)
+
+
+# Plotting the graph of the road network
+new_road_network.plot_graph()
+
+
+# Asking for user input to find the shortest path between two intersections
+start_point = int(input("Enter the ID of the starting point (intersection): "))
+end_point = int(input("Enter the ID of the ending point (intersection): "))
+shortest_distance = new_road_network.dijkstra_shortest_path(start_point, end_point)
+
+
+# Displaying the result
+if shortest_distance == float('inf'):
+    print("No path exists between the specified points.")
+else:
+    print(f"Shortest Distance from {start_point} to {end_point}: {shortest_distance}")
